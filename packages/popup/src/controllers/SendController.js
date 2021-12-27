@@ -139,7 +139,7 @@ class SendController extends React.Component {
 
     async onRecipientChange(address) {
         const { selectedAddress } = this.state;
-        const { chains } = this.props;
+        // const { chains } = this.props;
         const recipient = {
             value: address,
             valid: VALIDATION_STATE.NONE
@@ -153,7 +153,7 @@ class SendController extends React.Component {
             recipient.error = 'EXCEPTION.SEND.ADDRESS_FORMAT_ERROR';
         } else {
             const account = await PopupAPI.getAccountInfo(address);
-            if(!account[chains.selected === '_'? 'mainchain' : 'sidechain' ].address) {
+            if(!account['mainchain'].address) {
                 recipient.isActivated = false;
                 recipient.valid = true;
                 recipient.error = 'EXCEPTION.SEND.ADDRESS_UNACTIVATED_ERROR';
