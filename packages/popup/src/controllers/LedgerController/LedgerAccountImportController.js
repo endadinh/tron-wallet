@@ -36,7 +36,7 @@ class LedgerAccountImportController extends React.Component {
         const { ledgerImportAddress } = this.props;
         for(const address of ledgerImportAddress){
             const account = await PopupAPI.getAccountInfo(address);
-            let balance = account[chains === '_'? 'mainchain':'sidechain'].balance;
+            let balance = account['mainchain'].balance;
             balance = balance ? balance:0;
             accounts.push({address,balance:balance});
         }

@@ -27,6 +27,7 @@ class Account {
         this.updatingTransactions = false;
         this.selectedBankRecordId = 0;
         this.dealCurrencyPage = 0;
+        // this.bandwidth = 0;
         this.energy = 0;
         this.energyUsed = 0;
         this.balance = 0;
@@ -85,7 +86,7 @@ class Account {
 
         this.privateKey = privateKey;
         this.address = address;
-        this.balance = await NodeService.tronWeb.trx.getBalance(this.address);
+        // this.balance = await NodeService.tronWeb.trx.getBalance(this.address);
         
     }
 
@@ -94,18 +95,20 @@ class Account {
             if (privateKey.match(/^T/) && TronWeb.isAddress(privateKey)) {
                 this.privateKey = null;
                 this.address = privateKey;
-                this.balance = await NodeService.tronWeb.trx.getBalance(NodeService.tronWeb.fromHex(address));
+                // this.balance = await NodeService.tronWeb.trx.getBalance(NodeService.tronWeb.fromHex(address));
             } else {
                 this.privateKey = privateKey;
                 this.address = TronWeb.address.fromPrivateKey(privateKey);
-                this.balance = await NodeService.tronWeb.trx.getBalance(this.address);
+                // this.balance = await NodeService.tronWeb.trx.getBalance(this.address);
 
             }
         } catch (ex) { // eslint-disable-line
             throw new Error('INVALID_PRIVATE_KEY');
         }
     }
+    async getAsset(assetV2) { 
 
+    }
     getAccountAtIndex(index = 0) {
         if (this.type !== ACCOUNT_TYPE.MNEMONIC) {
             throw new Error('Deriving account keys at a specific index requires a mnemonic account');
@@ -126,18 +129,29 @@ class Account {
             type,
             name,
             frozenBalance,
-            totalEnergyWeight,
-            TotalEnergyLimit,
+            // totalEnergyWeight,
+            // TotalEnergyLimit,
             transactions,
             tokens,
-            netLimit,
+            // netLimit,
             netUsed,
             energy,
             energyUsed,
             lastUpdated,
-            asset
+            // asset
         } = StorageService.getAccount(this.address);
-
+        // const accountInfo = await tronWeb.trx.getAccount(this.address);
+        const Account = await NodeService.tronWeb.trx.getAccount(this.address);
+        this.balance= Account.balance;
+        const AccountResource = await NodeService.tronWeb.trx.getAccountResources(this.address);
+        let plusAsset = new BigNumber(this.balance).shiftedBy(-6); 
+        // const AssetV2 = Account.assetV2;
+        if(Account.assetV2) {
+            await AssetV2.map(item => { 
+                plusAsset+= new BigNumber(item.value).shiftedBy(-6);;
+            });
+        }
+        this.asset = plusAsset.toNumber();
         // Old TRC10 structure are no longer compatible
         //tokens.basic = {};
 
@@ -159,16 +173,18 @@ class Account {
         this.type = type;
         this.name = name;
         this.frozenBalance = frozenBalance;
-        this.totalEnergyWeight = totalEnergyWeight;
-        this.TotalEnergyLimit = TotalEnergyLimit;
+        // this.balance = balance;
+        // this.bandwidth = bandwidth;
+        this.totalEnergyWeight = AccountResource.TotalEnergyWeight;
+        this.TotalEnergyLimit = AccountResource.TotalEnergyLimit;
+        this.netLimit = AccountResource.freeNetLimit;
+        this.netUsed = AccountResource.freeNetUsed;
+        this.lastUpdated = lastUpdated;
         this.transactions = transactions;
         this.tokens = tokens;
         this.energy = energy;
         this.energyUsed = energyUsed;
-        this.netLimit = netLimit;
-        this.netUsed = netUsed;
-        this.lastUpdated = lastUpdated;
-        this.asset = asset;
+        // this.asset = asset;
         this.hash = '';
     }
 
@@ -228,7 +244,7 @@ class Account {
         try {
             const node = NodeService.getNodes().selected;
             //if (node === 'f0b1e38e-7bee-485e-9d3f-69410bf30681') {
-            const account = await NodeService.tronWeb.trx.getUnconfirmedAccount(address);
+            const account = await NodeService.tronWeb.trx.getAccount(address);
 
             if (!account.address) {
                 logger.info(`Account ${address} does not exist on the network`);
@@ -261,8 +277,8 @@ class Account {
                 this.tokens.smart[tokenId].isLocked = token.hasOwnProperty('isLocked') ? token.isLocked : false;
             }
 
-            this.frozenBalance = (account.frozen && account.frozen[0]['frozen_balance'] || 0) + (account['account_resource']['frozen_balance_for_energy'] && account['account_resource']['frozen_balance_for_energy']['frozen_balance'] || 0) + (account['delegated_frozen_balance_for_bandwidth'] || 0) + (account['account_resource']['delegated_frozen_balance_for_energy'] || 0);
-            this.balance = account.balance || 0;
+            this.frozenBalance = (account.frozen && account.frozen[0]['frozen_balance'] ? account.frozen[0]['frozen_balance'] : 0) + ((account['account_resource']['frozen_balance_for_energy'] && account['account_resource']['frozen_balance_for_energy']['frozen_balance']) ? account['account_resource']['frozen_balance_for_energy']['frozen_balance'] : 0) + (account['delegated_frozen_balance_for_bandwidth'] ? account['delegated_frozen_balance_for_bandwidth'] : 0) + (account['account_resource']['delegated_frozen_balance_for_energy'] ? account['account_resource']['delegated_frozen_balance_for_energy'] : 0);
+            this.balance = (account.balance ? account.balance : 0);
             const filteredTokens = (account.assetV2 || []).filter(({ value }) => value >= 0);
             for (const { key, value } of filteredTokens) {
                 let token = this.tokens.basic[key] || false;
