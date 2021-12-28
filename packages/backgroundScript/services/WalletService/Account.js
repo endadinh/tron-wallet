@@ -230,17 +230,16 @@ class Account {
      * usdtPrice            price of usdt
      **/
     async update(basicTokenPriceList = [], smartTokenPriceList = [], usdtPrice = 0) {
-
         if (!StorageService.allTokens[NodeService._selectedChain === '_' ? 'mainchain' : 'sidechain'].length) return;
         const selectedChain = NodeService._selectedChain;
-        const { address } = this;
+        const { address } = this.address;
         logger.info(`Requested update for ${ address }`);
-        const { data: { data: smartTokens } } = await axios.get(`${API_URL}/api/wallet/trc20_info`, {
-            headers: { chain: selectedChain === '_' ? 'MainChain' : 'DAppChain' },
-            params: { address }
-        }).catch(e => {
-            return { data: { data: [] } };
-        });
+        // const { data: { data: smartTokens } } = await axios.get(`${API_URL}/api/wallet/trc20_info`, {
+        //     headers: { chain: selectedChain === '_' ? 'MainChain' : 'DAppChain' },
+        //     params: { address }
+        // }).catch(e => {
+        //     return { data: { data: [] } };
+        // });
         try {
             const node = NodeService.getNodes().selected;
             //if (node === 'f0b1e38e-7bee-485e-9d3f-69410bf30681') {
@@ -251,31 +250,31 @@ class Account {
                 this.reset();
                 return true;
             }
-            const addSmartTokens = Object.entries(this.tokens.smart).filter(([tokenId, token]) => !token.hasOwnProperty('abbr'));
-            for (const [tokenId, token] of addSmartTokens) {
-                const contract = await NodeService.tronWeb.contract().at(tokenId).catch(e => false);
-                if (contract) {
-                    let balance;
-                    const number = await contract.balanceOf(address).call();
-                    if (number.balance) {
-                        balance = new BigNumber(number.balance).toString();
-                    } else {
-                        balance = new BigNumber(number).toString();
-                    }
-                    if (typeof token.name === 'object' || (!token.decimals)) {
-                        const token2 = await NodeService.getSmartToken(tokenId).catch(err => {
-                            throw new Error(`get token ${tokenId} info fail`);
-                        });
-                        this.tokens.smart[tokenId] = token2;
-                    }
-                    this.tokens.smart[tokenId].balance = balance;
-                    this.tokens.smart[tokenId].price = 0;
-                } else {
-                    this.tokens.smart[tokenId].balance = 0;
-                    this.tokens.smart[tokenId].price = 0;
-                }
-                this.tokens.smart[tokenId].isLocked = token.hasOwnProperty('isLocked') ? token.isLocked : false;
-            }
+            // const addSmartTokens = Object.entries(this.tokens.smart).filter(([tokenId, token]) => !token.hasOwnProperty('abbr'));
+            // for (const [tokenId, token] of addSmartTokens) {
+            //     const contract = await NodeService.tronWeb.contract().at(tokenId).catch(e => false);
+            //     if (contract) {
+            //         let balance;
+            //         const number = await contract.balanceOf(address).call();
+            //         if (number.balance) {
+            //             balance = new BigNumber(number.balance).toString();
+            //         } else {
+            //             balance = new BigNumber(number).toString();
+            //         }
+            //         if (typeof token.name === 'object' || (!token.decimals)) {
+            //             const token2 = await NodeService.getSmartToken(tokenId).catch(err => {
+            //                 throw new Error(`get token ${tokenId} info fail`);
+            //             });
+            //             this.tokens.smart[tokenId] = token2;
+            //         }
+            //         this.tokens.smart[tokenId].balance = balance;
+            //         this.tokens.smart[tokenId].price = 0;
+            //     } else {
+            //         this.tokens.smart[tokenId].balance = 0;
+            //         this.tokens.smart[tokenId].price = 0;
+            //     }
+            //     this.tokens.smart[tokenId].isLocked = token.hasOwnProperty('isLocked') ? token.isLocked : false;
+            // }
 
             this.frozenBalance = (account.frozen && account.frozen[0]['frozen_balance'] ? account.frozen[0]['frozen_balance'] : 0) + ((account['account_resource']['frozen_balance_for_energy'] && account['account_resource']['frozen_balance_for_energy']['frozen_balance']) ? account['account_resource']['frozen_balance_for_energy']['frozen_balance'] : 0) + (account['delegated_frozen_balance_for_bandwidth'] ? account['delegated_frozen_balance_for_bandwidth'] : 0) + (account['account_resource']['delegated_frozen_balance_for_energy'] ? account['account_resource']['delegated_frozen_balance_for_energy'] : 0);
             this.balance = (account.balance ? account.balance : 0);

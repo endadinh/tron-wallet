@@ -49,7 +49,7 @@ class SendPage extends React.Component {
         this.onAmountChange = this.onAmountChange.bind(this);
         this.onTokenChange = this.onTokenChange.bind(this);
         this.onModeChange = this.onModeChange.bind(this);
-        this.onSend = this.onSend.bind(this);
+        // this.onSend = this.onSend.bind(this);
     }
 
     reset() {
@@ -209,65 +209,66 @@ class SendPage extends React.Component {
     }
 
     onSend() {
-        this.setState({
-            isLoading: true,
-            success: false
-        });
+        // PopupAPI.changeState(APP_STATE.READY)
+        // this.setState({
+        //     isLoading: true,
+        //     success: false
+        // });
 
-        const { value: recipient } = this.state.recipient;
-        const { value: amount } = this.state.amount;
+        // const { value: recipient } = this.state.recipient;
+        // const { value: amount } = this.state.amount;
 
-        const {
-            mode,
-            tokenID,
-            address,
-            decimals
-        } = this.state.token;
+        // const {
+        //     mode,
+        //     tokenID,
+        //     address,
+        //     decimals
+        // } = this.state.token;
 
-        let func;
+        // let func;
 
-        if(mode === TOKEN_MODE.TRX) {
-            func = PopupAPI.sendTrx(
-                recipient,
-                new BigNumber(amount).shiftedBy(6).toString()
-            );
-        }
+        // if(mode === TOKEN_MODE.TRX) {
+        //     func = PopupAPI.sendTrx(
+        //         recipient,
+        //         new BigNumber(amount).shiftedBy(6).toString()
+        //     );
+        // }
 
-        if(mode === TOKEN_MODE.TRC10) {
-            func = PopupAPI.sendBasicToken(
-                recipient,
-                new BigNumber(amount).shiftedBy(decimals).toString(),
-                tokenID
-            );
-        }
+        // if(mode === TOKEN_MODE.TRC10) {
+        //     func = PopupAPI.sendBasicToken(
+        //         recipient,
+        //         new BigNumber(amount).shiftedBy(decimals).toString(),
+        //         tokenID
+        //     );
+        // }
 
-        if(mode === TOKEN_MODE.TRC20) {
-            func = PopupAPI.sendSmartToken(
-                recipient,
-                new BigNumber(amount).shiftedBy(decimals).toString(),
-                address
-            );
-        }
+        // if(mode === TOKEN_MODE.TRC20) {
+        //     func = PopupAPI.sendSmartToken(
+        //         recipient,
+        //         new BigNumber(amount).shiftedBy(decimals).toString(),
+        //         address
+        //     );
+        // }
 
-        func.then(() => {
-            this.setState({
-                error: false,
-                success: true,
-                isLoading: false,
-                recipient: {
-                    valid: VALIDATION_STATE.NONE,
-                    value: ''
-                }
-            });
+        // func.then(() => {
+        //     this.setState({
+        //         error: false,
+        //         success: true,
+        //         isLoading: false,
+        //         recipient: {
+        //             valid: VALIDATION_STATE.NONE,
+        //             value: ''
+        //         }
+        //     });
 
-            this.reset();
-        }).catch(error => (
-            this.setState({
-                success: false,
-                isLoading: false,
-                error
-            })
-        ));
+        //     this.reset();
+        // }).catch(error => (
+        //     this.setState({
+        //         success: false,
+        //         isLoading: false,
+        //         error
+        //     })
+        // ));
     }
 
     renderRecipient() {
@@ -423,12 +424,14 @@ class SendPage extends React.Component {
                     </div>
                     <Button
                         id={ `SEND.BUTTON.${ mode }` }
-                        isLoading={ isLoading }
-                        isValid={
-                            this.state.amount.valid === VALIDATION_STATE.VALID &&
-                            this.state.recipient.valid === VALIDATION_STATE.VALID
+                        // isLoading={ isLoading }
+                        // isValid={
+                        //     this.state.amount.valid === VALIDATION_STATE.VALID &&
+                        //     this.state.recipient.valid === VALIDATION_STATE.VALID
+                        // }
+                        onClick={ () =>
+                            PopupAPI.changeState(APP_STATE.RECEIVE) 
                         }
-                        onClick={ this.onSend }
                     />
                 </div>
             </div>

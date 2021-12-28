@@ -256,18 +256,23 @@ class Wallet extends EventEmitter {
     }
 
     async refresh() {
-        this.setCache(false);
+        await this.setCache(false);
         let res;
         const accounts = Object.values(this.accounts);
+        // await accounts.loadCache();
         for(const account of accounts) {
             if(account.address === this.selectedAccount) {
                 const r = await account.update(basicPrice, smartPrice, usdtPrice).catch(e => false);
                 if(r) {
                     res = true;
                     this.emit('setAccount', this.selectedAccount);
+                    account.loadCache();
                 } else {
                     res = false;
                 }
+                    // res = true;
+                    // this.emit('setAccount', this.selectedAccount);
+                
             }else{
                 continue;
                 //await account.update(basicPrice,smartPrice);
@@ -301,7 +306,8 @@ class Wallet extends EventEmitter {
             APP_STATE.LEDGER,
             APP_STATE.LEDGER_IMPORT_ACCOUNT,
             APP_STATE.NODE_MANAGE,
-            APP_STATE.TRANSFER
+            APP_STATE.TRANSFER,
+            APP_STATE.CONFIRM_SEND
         ];
         if(!stateAry.includes(appState))
             return logger.error(`Attempted to change app state to ${ appState }. Only 'restoring' and 'creating' is permitted`);
@@ -649,12 +655,14 @@ class Wallet extends EventEmitter {
 
     async setCache(isResetPhishingList = true ){
         const selectedChain = NodeService._selectedChain;
-        const dapps   = axios.get('https://dappradar.com/api/xchain/dapps/theRest');
-        const dapps2  = axios.get('https://dappradar.com/api/xchain/dapps/list/0');
-        Promise.all([dapps, dapps2]).then(res => {
-            const tronDapps =  res[ 0 ].data.data.list.concat(res[ 1 ].data.data.list).filter(({ protocols: [ type ] }) => type === 'tron').map(({ logo: icon, url: href, title: name }) => ({ icon, href, name }));
-            StorageService.saveAllDapps(tronDapps);
-        });
+        // const dapps   = axios.get('https://dappradar.com/api/xchain/dapps/theRest');
+        // const dapps2  = axios.get('https://dappradar.com/api/xchain/dapps/list/0');
+        // if(dapps && dapps2){
+        //     Promise.all([dapps, dapps2]).then(res => {
+        //         const tronDapps =  res[ 0 ].data.data.list.concat(res[ 1 ].data.data.list).filter(({ protocols: [ type ] }) => type === 'tron').map(({ logo: icon, url: href, title: name }) => ({ icon, href, name }));
+        //         StorageService.saveAllDapps(tronDapps);
+        //     });
+        // }
         const trc10tokens = axios.get('https://apilist.tronscan.org/api/token?showAll=1&limit=4000&fields=tokenID,name,precision,abbr,imgUrl,isBlack');
         const trc20tokens = axios.get('https://apilist.tronscan.org/api/tokens/overview?start=0&limit=1000&filter=trc20');
         const trc20tokens_s = axios.get('https://dappchainapi.tronscan.org/api/tokens/overview?start=0&limit=1000&filter=trc20');

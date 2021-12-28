@@ -625,7 +625,7 @@ class AccountsPage extends React.Component {
                         { this.renderResource(accounts.accounts[accounts.selected.address]) }
                         { this.renderIeos(ieos) }
                         <div className="scroll">
-                            { this.renderTokens(tokens) }
+                            { this.renderTokens(tokens)}
                         </div>
                     </div>
                 </div>
@@ -639,7 +639,7 @@ class AccountsPage extends React.Component {
                                onClose={async() => {
                                     const setting = await PopupAPI.getSetting();
                                     PopupAPI.setSetting({...setting,showUpdateDescription:false});
-                               }} />
+                        }} />
                     </div>
                     :
                     null

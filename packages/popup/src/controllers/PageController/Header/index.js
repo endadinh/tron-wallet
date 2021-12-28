@@ -75,7 +75,7 @@ class Header extends React.Component {
                             <div className="fun" data-tip={formatMessage({id:'INDEX_ICON_TITLE.LOCK'})} data-for='lock' onClick={ () => { PopupAPI.lockWallet(); } }>&nbsp;</div>
                             <ReactTooltip id='lock' effect='solid' />
                             <div className="fun" data-tip={formatMessage({id:'INDEX_ICON_TITLE.REFRESH'})} data-for='refresh' onClick={() => {
-                                if(!refresh) {
+                                // if(refresh) {    
                                     this.setState({ refresh: true }, async() => {
                                         Toast.loading();
                                         const r = await PopupAPI.refresh();
@@ -84,7 +84,7 @@ class Header extends React.Component {
                                             Toast.hide();
                                         }
                                     });
-                                }
+                                // }
 
                             }}
                             >&nbsp;</div>

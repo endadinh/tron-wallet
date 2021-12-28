@@ -13,7 +13,7 @@ import RestoreAccountController from '@tronlink/popup/src/controllers/RestoreAcc
 import PageController from '@tronlink/popup/src/controllers/PageController';
 import ConfirmationController from '@tronlink/popup/src/controllers/ConfirmationController';
 import ReceiveController from '@tronlink/popup/src/controllers/ReceiveController';
-import SendController from '@tronlink/popup/src/controllers/SendController';
+import SendController from '@tronlink/popup/src/controllers/SendController/SendController';
 import TransactionsController from '@tronlink/popup/src/controllers/TransactionsController';
 import SettingController from '@tronlink/popup/src/controllers/SettingController';
 import AddTokenController from '@tronlink/popup/src/controllers/AddTokenController';
@@ -31,6 +31,7 @@ import LedgerController from '@tronlink/popup/src/controllers/LedgerController';
 import LedgerAccountImportController from '@tronlink/popup/src/controllers/LedgerController/LedgerAccountImportController';
 import NodeManageController from '@tronlink/popup/src/controllers/NodeManageController';
 import TransferController from '@tronlink/popup/src/controllers/TransferController';
+import ConfirmSendController from '@tronlink/popup/src/controllers/ConfirmSendController'
 
 import 'antd-mobile/dist/antd-mobile.css';
 import 'react-custom-scroll/dist/customScroll.css';
@@ -77,6 +78,9 @@ class App extends React.Component {
                 break;
             case APP_STATE.SEND:
                 dom = <SendController chains={chains} accounts={accounts} />;
+                break;
+            case APP_STATE.CONFIRM_SEND:
+                dom = <ConfirmSendController chains={chains} accounts={accounts} />;
                 break;
             case APP_STATE.TRANSFER:
                 dom = <TransferController accounts={accounts} chains={chains} onCancel={ () => PopupAPI.changeState(APP_STATE.TRANSACTIONS) }  />;
