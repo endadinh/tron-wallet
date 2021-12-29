@@ -672,14 +672,16 @@ class Wallet extends EventEmitter {
             res[ 0 ].data.data.concat( res[ 1 ].data.tokens).forEach(({ abbr, name, imgUrl = false, tokenID = false, contractAddress = false, decimal = false, precision = false, isBlack = false }) => {
                 t.push({ tokenId: tokenID ? tokenID.toString() : contractAddress, abbr, name, imgUrl, decimals: precision || decimal || 0, isBlack });
             });
-            res[ 0 ].data.data.concat( res[ 2 ].data.tokens).forEach(({ abbr, name, imgUrl = false, tokenID = false, contractAddress = false, decimal = false, precision = false, isBlack = false }) => {
-                t2.push({ tokenId: tokenID ? tokenID.toString() : contractAddress, abbr, name, imgUrl, decimals: precision || decimal || 0, isBlack });
-            });
+            if(res[2].data.tokens){
+                res[ 0 ].data.data.concat( res[ 2 ].data.tokens).forEach(({ abbr, name, imgUrl = false, tokenID = false, contractAddress = false, decimal = false, precision = false, isBlack = false }) => {
+                    t2.push({ tokenId: tokenID ? tokenID.toString() : contractAddress, abbr, name, imgUrl, decimals: precision || decimal || 0, isBlack });
+                });
+            }
             StorageService.saveAllTokens(t,t2);
         });
 
         if(isResetPhishingList) {
-            axios.get(`${API_URL}/api/wallet/official_token`,{headers:{chain:selectedChain==='_'?'MainChain':'DAppChain'}}).then(res=>{
+            axios.get(`${API_URL}/api/wallet/official_token`,{headers:{chain:'MainChain'}}).then(res=>{
                 StorageService.saveVTokenList(res.data.data);
                 this.emit('setVTokenList',res.data.data);
             }).catch(e => {
