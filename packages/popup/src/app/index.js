@@ -31,7 +31,8 @@ import LedgerController from '@tronlink/popup/src/controllers/LedgerController';
 import LedgerAccountImportController from '@tronlink/popup/src/controllers/LedgerController/LedgerAccountImportController';
 import NodeManageController from '@tronlink/popup/src/controllers/NodeManageController';
 import TransferController from '@tronlink/popup/src/controllers/TransferController';
-import ConfirmSendController from '@tronlink/popup/src/controllers/ConfirmSendController'
+import TestHtmlController from '@tronlink/popup/src/controllers/SendController';
+// import ConfirmSendController from '@tronlink/popup/src/controllers/ConfirmSendController'
 
 import 'antd-mobile/dist/antd-mobile.css';
 import 'react-custom-scroll/dist/customScroll.css';
@@ -79,9 +80,9 @@ class App extends React.Component {
             case APP_STATE.SEND:
                 dom = <SendController chains={chains} accounts={accounts} />;
                 break;
-            case APP_STATE.CONFIRM_SEND:
-                dom = <ConfirmSendController chains={chains} accounts={accounts} />;
-                break;
+            // case APP_STATE.CONFIRM_SEND:
+            //     dom = <ConfirmSendController chains={chains} accounts={accounts} />;
+            //     break;
             case APP_STATE.TRANSFER:
                 dom = <TransferController accounts={accounts} chains={chains} onCancel={ () => PopupAPI.changeState(APP_STATE.TRANSACTIONS) }  />;
                 break;

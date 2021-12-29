@@ -496,7 +496,7 @@ class SendController extends React.Component {
                                 <div className='dropWrap' style={isOpen.token ? (tokens.length <= 5 ? { height: 36 * tokens.length } : { height: 180, overflow: 'scroll' }) : {}}>
                                     {
                                         tokens.filter(({ isLocked = false }) => !isLocked ).map(({ tokenId: id, balance, name, decimals, decimal = false, abbr = false, symbol = false, imgUrl = false,frozenBalance = 0 }) => {
-                                            const d =  decimal || decimals;
+                                            const d =  Number(decimal || decimals);
                                             const BN = BigNumber.clone({
                                                 DECIMAL_PLACES: d,
                                                 ROUNDING_MODE: Math.min(8, d)
@@ -566,6 +566,9 @@ class SendController extends React.Component {
                                 <h1>Confirm??</h1>
                                 <h3>Amount: <span>{amount.value}</span></h3>
                                 <h3>Recipient: <span>{recipient.value}</span></h3>
+                                <h3>Tokens: <span>{selectedToken.name}</span></h3>
+                                <h3>Tokens: <span>{selectedToken.id}</span></h3>
+                                <h3>Tokens: <span>{selectedToken.decimals}</span></h3>
                             </div> 
                             <div className='buttonRow'>
                                 <Button
@@ -584,35 +587,7 @@ class SendController extends React.Component {
                             </div>
                          </div>
                      </div>
-                 )
-            // case RESTORATION_STAGE.CHOOSING_TYPE:
-            //     return (
-            //         <ChoosingType
-            //             onSubmit={ importType => this.changeStage(importType) }
-            //             onCancel={ () => this.changeStage(RESTORATION_STAGE.SETTING_NAME) }
-            //         />
-            //     );
-            // case RESTORATION_STAGE.IMPORT_PRIVATE_KEY:
-            //     return (
-            //         <PrivateKeyImport
-            //             name={ walletName }
-            //             onCancel={ () => this.changeStage(RESTORATION_STAGE.CHOOSING_TYPE) }
-            //         />
-            //     );
-            // case RESTORATION_STAGE.IMPORT_MNEMONIC:
-            //     return (
-            //         <MnemonicImport
-            //             name={ walletName }
-            //             onCancel={ () => this.changeStage(RESTORATION_STAGE.CHOOSING_TYPE) }
-            //         />
-            //     );
-            // case RESTORATION_STAGE.IMPORT_KEY_STORE:
-            //     return (
-            //         <KeystoreImport
-            //             name={ walletName }
-            //             onCancel={ () => this.changeStage(RESTORATION_STAGE.CHOOSING_TYPE) }
-            //         />
-            //     );    
+                 ) 
              default:
                 return null;
         }
