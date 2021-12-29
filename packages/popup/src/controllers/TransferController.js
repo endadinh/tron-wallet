@@ -336,7 +336,7 @@ class TransferController extends React.Component {
                             <div className='dropWrap' style={isOpen.token ? (tokens.length <= 5 ? { height: 36 * tokens.length } : { height: 180, overflow: 'scroll' }) : {}}>
                                 {
                                     tokens.filter(({ isLocked = false }) => !isLocked ).map(({ tokenId: id, balance, name, decimals, decimal = false, abbr = false, symbol = false,imgUrl=false,frozenBalance = 0, isMapping }) => {
-                                        const d =  decimal || decimals;
+                                        const d =  Number(decimal || decimals);
                                         const BN = BigNumber.clone({
                                             DECIMAL_PLACES: d,
                                             ROUNDING_MODE: Math.min(8, d)
