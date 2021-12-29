@@ -38,6 +38,15 @@ const NodeService = {
                 chain:'_' ,
                 connect: SIDE_CHAIN_ID
             },
+            // 'f0b1e38e-7bee-485e-9d3f-69410bf30681': {
+            //     name: 'Mainnet',
+            //     fullNode: 'https://api.trongrid.io',
+            //     solidityNode: 'https://api.trongrid.io',
+            //     eventServer: 'https://api.trongrid.io',
+            //     default: true, // false
+            //     chain:'_' ,
+            //     connect: SIDE_CHAIN_ID
+            // },
             '6739be94-ee43-46af-9a62-690cf0947269': {
                 name: 'Shasta Testnet',
                 fullNode: 'https://api.shasta.trongrid.io',
