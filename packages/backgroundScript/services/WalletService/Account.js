@@ -46,6 +46,7 @@ class Account {
             basic: {},
             smart: {}
         };
+        this.mnemonic='';
         this.trxAddress = 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb';
         // this.tokens.smart[ CONTRACT_ADDRESS.USDT ] = {
         //     abbr: 'USDT',
@@ -77,15 +78,14 @@ class Account {
             throw new Error('INVALID_MNEMONIC');
         }
 
-        this.mnemonic = mnemonic;
 
         const {
             privateKey,
             address
         } = this.getAccountAtIndex(this.accountIndex);
-
         this.privateKey = privateKey;
         this.address = address;
+        this.mnemonic = mnemonic;
         // this.balance = await NodeService.tronWeb.trx.getBalance(this.address);
         
     }
@@ -138,6 +138,7 @@ class Account {
             energy,
             energyUsed,
             lastUpdated,
+            mnemonic,
             // asset
         } = StorageService.getAccount(this.address);
         // const accountInfo = await tronWeb.trx.getAccount(this.address);
@@ -184,6 +185,7 @@ class Account {
         this.tokens = tokens;
         this.energy = energy;
         this.energyUsed = energyUsed;
+        this.mnemonic = mnemonic;
         // this.asset = asset;
         this.hash = '';
     }
@@ -232,7 +234,7 @@ class Account {
     async update(basicTokenPriceList = [], smartTokenPriceList = [], usdtPrice = 0) {
         if (!StorageService.allTokens[NodeService._selectedChain === '_' ? 'mainchain' : 'sidechain'].length) return;
         const selectedChain = NodeService._selectedChain;
-        const { address } = this;
+        const address  = this.address;
         logger.info(`Requested update for ${ address }`);
         const { data: { data: smartTokens } } = await axios.get(`${API_URL}/api/wallet/trc20_info`, {
             headers: { chain: selectedChain === '_' ? 'MainChain' : 'DAppChain' },

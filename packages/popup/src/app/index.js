@@ -32,6 +32,7 @@ import LedgerAccountImportController from '@tronlink/popup/src/controllers/Ledge
 import NodeManageController from '@tronlink/popup/src/controllers/NodeManageController';
 import TransferController from '@tronlink/popup/src/controllers/TransferController';
 import TestHtmlController from '@tronlink/popup/src/controllers/SendController';
+import ExportAccountController from '@tronlink/popup/src/controllers/ExportAccountController'
 // import ConfirmSendController from '@tronlink/popup/src/controllers/ConfirmSendController'
 
 import 'antd-mobile/dist/antd-mobile.css';
@@ -83,6 +84,9 @@ class App extends React.Component {
             // case APP_STATE.CONFIRM_SEND:
             //     dom = <ConfirmSendController chains={chains} accounts={accounts} />;
             //     break;
+            case APP_STATE.EXPORT_ACCOUNT:
+                dom = <ExportAccountController accounts={accounts} />;
+                break;
             case APP_STATE.TRANSFER:
                 dom = <TransferController accounts={accounts} chains={chains} onCancel={ () => PopupAPI.changeState(APP_STATE.TRANSACTIONS) }  />;
                 break;
@@ -133,7 +137,7 @@ class App extends React.Component {
                 break;
             case APP_STATE.NODE_MANAGE:
                 dom = <NodeManageController nodes={nodes} chains={chains}  onCancel={ () => PopupAPI.changeState(APP_STATE.SETTING) } />;
-                break;
+                break;   
             default:
                 dom =
                     <div className='unsupportedState' onClick={ () => PopupAPI.resetState(APP_STATE.USDT_INCOME_RECORD) }>

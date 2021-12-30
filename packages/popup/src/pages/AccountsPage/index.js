@@ -105,15 +105,18 @@ class AccountsPage extends React.Component {
     }
 
     async onExport() {
-        const {
-            mnemonic,
-            privateKey
-        } = await PopupAPI.exportAccount();
-        this.setState({
-            mnemonic,
-            privateKey,
-            showBackUp: true
-        });
+        PopupAPI.changeState(APP_STATE.EXPORT_ACCOUNT)
+
+        // const {
+        //     mnemonic,
+        //     privateKey
+        // } = await PopupAPI.exportAccount();
+        
+        // this.setState({
+        //     mnemonic,
+        //     privateKey,
+        //     showBackUp: true
+        // });
     }
 
     handleShowChainList() {

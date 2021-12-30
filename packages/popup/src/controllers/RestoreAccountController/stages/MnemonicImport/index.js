@@ -114,7 +114,8 @@ class MnemonicImport extends React.Component {
 
         const {
             addresses,
-            selected
+            selected,
+            mnemonic
         } = this.state;
 
         const { name } = this.props;
@@ -126,7 +127,8 @@ class MnemonicImport extends React.Component {
             const walletName = isSingle ? name : `${ name } #${ i }`;
             await PopupAPI.importAccount(
                 privateKey,
-                walletName
+                walletName,
+                mnemonic
             );
         }
         PopupAPI.resetState();
