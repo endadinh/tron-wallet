@@ -30,7 +30,8 @@ export const APP_STATE = {
     LEDGER_IMPORT_ACCOUNT: 23, // [X] connect ledger wallet
     NODE_MANAGE:24, // node manage
     TRANSFER:25, // transfer
-    CONFIRM_SEND:26 //confirm send
+    CONFIRM_SEND:26, //confirm send
+    EXPORT_ACCOUNT:27
 }; // User can delete *all* accounts. This will set the appState to UNLOCKED.
 
 export const ACCOUNT_TYPE = {
@@ -38,6 +39,13 @@ export const ACCOUNT_TYPE = {
     PRIVATE_KEY: 1,
     LEDGER:2
 };
+
+export const EXPORT_STAGE = { 
+    EXPORT_ACCOUNT:0,
+    MNEMONIC: 1,
+    PRIVATE_KEY:2,
+    KEY_STORE:3
+}
 
 export const VALIDATION_STATE = {
     NONE: 'no-state',

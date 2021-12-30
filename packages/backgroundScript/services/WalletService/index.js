@@ -307,7 +307,8 @@ class Wallet extends EventEmitter {
             APP_STATE.LEDGER_IMPORT_ACCOUNT,
             APP_STATE.NODE_MANAGE,
             APP_STATE.TRANSFER,
-            APP_STATE.CONFIRM_SEND
+            APP_STATE.CONFIRM_SEND,
+            APP_STATE.EXPORT_ACCOUNT
         ];
         if(!stateAry.includes(appState))
             return logger.error(`Attempted to change app state to ${ appState }. Only 'restoring' and 'creating' is permitted`);
@@ -629,7 +630,7 @@ class Wallet extends EventEmitter {
      * @returns {Promise.<boolean>}
      */
 
-    async importAccount({ privateKey, name }) {
+    async importAccount({ privateKey, name, mnemonic}) {
         logger.info(`Importing account '${ name }' from popup`);
 
         const account = new Account(
@@ -642,6 +643,7 @@ class Wallet extends EventEmitter {
         } = account;
 
         account.name = name;
+        account.mnemonic = mnemonic;
         if(Object.keys(this.accounts).length === 0) {
             this.setCache();
         }
