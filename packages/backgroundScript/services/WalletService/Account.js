@@ -145,14 +145,15 @@ class Account {
         const Account = await NodeService.tronWeb.trx.getAccount(this.address);
         this.balance= Account.balance;
         const AccountResource = await NodeService.tronWeb.trx.getAccountResources(this.address);
-        let plusAsset = new BigNumber(this.balance).shiftedBy(-6); 
+        this.asset = new BigNumber(this.balance).shiftedBy(-6);
+        // this.asset = this.balance;
+        // let plusAsset = 0;
         // const AssetV2 = Account.assetV2;
-        if(Account.assetV2) {
-            await AssetV2.map(item => { 
-                plusAsset+= new BigNumber(item.value).shiftedBy(-6);;
-            });
-        }
-        this.asset = plusAsset.toNumber();
+        // if(AssetV2) {
+        //     await AssetV2.map(item => { 
+        //         plusAsset+= new BigNumber(item.value).shiftedBy(-6);
+        //     });
+        // }
         // Old TRC10 structure are no longer compatible
         //tokens.basic = {};
 
