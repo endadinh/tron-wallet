@@ -162,6 +162,8 @@ const backgroundScript = {
         duplex.on('getDappList', this.walletService.getDappList);
         duplex.on('setDappList', this.walletService.setDappList);
         duplex.on('getAccountInfo', this.walletService.getAccountInfo);
+        duplex.on('getAccountBalance', this.walletService.getAccountBalance);
+
 
         duplex.on('setGaEvent', this.walletService.setGaEvent);
         duplex.on('getAllDapps', this.walletService.getAllDapps);

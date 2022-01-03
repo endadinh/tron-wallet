@@ -27,7 +27,7 @@ class Account {
         this.updatingTransactions = false;
         this.selectedBankRecordId = 0;
         this.dealCurrencyPage = 0;
-        // this.bandwidth = 0;
+        this.bandwidth = 0;
         this.energy = 0;
         this.energyUsed = 0;
         this.balance = 0;
@@ -46,7 +46,7 @@ class Account {
             basic: {},
             smart: {}
         };
-        this.mnemonic='';
+        this.mnemonic=false;
         this.trxAddress = 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb';
         // this.tokens.smart[ CONTRACT_ADDRESS.USDT ] = {
         //     abbr: 'USDT',
@@ -77,15 +77,14 @@ class Account {
         if (!Utils.validateMnemonic(mnemonic)) {
             throw new Error('INVALID_MNEMONIC');
         }
-
+        this.mnemonic = mnemonic;
 
         const {
             privateKey,
             address
-        } = this.getAccountAtIndex(this.accountIndex);
+        } = await this.getAccountAtIndex(this.accountIndex);
         this.privateKey = privateKey;
         this.address = address;
-        this.mnemonic = mnemonic;
         // this.balance = await NodeService.tronWeb.trx.getBalance(this.address);
         
     }
@@ -121,6 +120,9 @@ class Account {
     }
 
     async loadCache() {
+        logger.info(`mnemonic ${this.mnemonic}`);
+        logger.info(`privateKey ${this.privateKey}`);
+        logger.info(`Type: ${this.type}`)
         if (!StorageService.hasAccount(this.address)) {
             return logger.warn('Attempted to load cache for an account that does not exist');
         }
@@ -143,9 +145,11 @@ class Account {
         } = StorageService.getAccount(this.address);
         // const accountInfo = await tronWeb.trx.getAccount(this.address);
         const Account = await NodeService.tronWeb.trx.getAccount(this.address);
-        this.balance= Account.balance;
         const AccountResource = await NodeService.tronWeb.trx.getAccountResources(this.address);
+        const Bandwidth = await NodeService.tronWeb.trx.getBandwidth(this.address);
+        this.balance= Account.balance;
         this.asset = new BigNumber(this.balance).shiftedBy(-6);
+        this.bandwidth = Bandwidth;
         // this.asset = this.balance;
         // let plusAsset = 0;
         // const AssetV2 = Account.assetV2;
@@ -176,11 +180,11 @@ class Account {
         this.name = name;
         this.frozenBalance = frozenBalance;
         // this.balance = balance;
-        // this.bandwidth = bandwidth;
         this.totalEnergyWeight = AccountResource.TotalEnergyWeight;
         this.TotalEnergyLimit = AccountResource.TotalEnergyLimit;
         this.netLimit = AccountResource.freeNetLimit;
-        this.netUsed = AccountResource.freeNetUsed;
+        // this.netUsed = AccountResource.freeNetUsed ? AccountResource.freeNetUsed : 0 ;
+        this.netUsed = netUsed
         this.lastUpdated = lastUpdated;
         this.transactions = transactions;
         this.tokens = tokens;
@@ -213,6 +217,7 @@ class Account {
         this.energy = 0;
         this.energyUsed = 0;
         this.netUsed = 0;
+        this.bandwidth = 0;
         this.transactions = {};
         this.ignoredTransactions = [];
         this.netLimit = 0;
@@ -236,6 +241,7 @@ class Account {
         if (!StorageService.allTokens[NodeService._selectedChain === '_' ? 'mainchain' : 'sidechain'].length) return;
         const selectedChain = NodeService._selectedChain;
         const address  = this.address;
+        logger.info(`hahaha ${this.bandwidth}`)
         logger.info(`Requested update for ${ address }`);
         const { data: { data: smartTokens } } = await axios.get(`${API_URL}/api/wallet/trc20_info`, {
             headers: { chain: selectedChain === '_' ? 'MainChain' : 'DAppChain' },
@@ -281,6 +287,7 @@ class Account {
 
             this.frozenBalance = (account.frozen && account.frozen[0]['frozen_balance'] ? account.frozen[0]['frozen_balance'] : 0) + ((account['account_resource']['frozen_balance_for_energy'] && account['account_resource']['frozen_balance_for_energy']['frozen_balance']) ? account['account_resource']['frozen_balance_for_energy']['frozen_balance'] : 0) + (account['delegated_frozen_balance_for_bandwidth'] ? account['delegated_frozen_balance_for_bandwidth'] : 0) + (account['account_resource']['delegated_frozen_balance_for_energy'] ? account['account_resource']['delegated_frozen_balance_for_energy'] : 0);
             this.balance = (account.balance ? account.balance : 0);
+            this.bandwidth = await NodeService.tronWeb.trx.getBandwidth(account.address);
             const filteredTokens = (account.assetV2 || []).filter(({ value }) => value >= 0);
             for (const { key, value } of filteredTokens) {
                 let token = this.tokens.basic[key] || false;
@@ -475,6 +482,7 @@ class Account {
         const { EnergyLimit = 0, EnergyUsed = 0, freeNetLimit, NetLimit = 0, freeNetUsed = 0, NetUsed = 0, TotalEnergyWeight, TotalEnergyLimit } = await NodeService.tronWeb.trx.getAccountResources(address);
         this.energy = EnergyLimit;
         this.energyUsed = EnergyUsed;
+        this.bandwidth = await NodeService.tronWeb.trx.getBandwidth(address);
         this.netLimit = freeNetLimit + NetLimit;
         this.netUsed = NetUsed + freeNetUsed;
         this.totalEnergyWeight = TotalEnergyWeight;
@@ -518,6 +526,7 @@ class Account {
             name: this.name,
             address: this.address,
             balance: this.balance,
+            bandwidth: this.bandwidth,
             frozenBalance: this.frozenBalance,
             totalEnergyWeight: this.totalEnergyWeight,
             TotalEnergyLimit: this.TotalEnergyLimit,

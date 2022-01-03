@@ -70,7 +70,7 @@ class App extends React.Component {
                 dom = <RestoreAccountController />;
                 break;
             case APP_STATE.READY:
-                dom = <PageController />;
+                dom = <PageController accounts={accounts} chains={chains}/>;
                 break;
             case APP_STATE.REQUESTING_CONFIRMATION:
                 dom = <ConfirmationController authorizeDapps={authorizeDapps} />;
