@@ -66,14 +66,13 @@ class MnemonicImport extends React.Component {
         const { formatMessage } = this.props.intl;
         const addresses = [];
         for(let i = 0; i < 5; i++) {
-            let account = Utils.getAccountAtIndex(
+            let account = await Utils.getAccountAtIndex(
                 mnemonic,
                 i
             );
             if(!(account.address in this.props.accounts)) {
-                const accountInfo = await PopupAPI.getAccountInfo(account.address);
-                let balance = accountInfo[chains === '_'? 'mainchain':'sidechain'].balance;
-                balance = balance ? balance:0;
+                const accountBalance = await PopupAPI.getAccountBalance(account.address);
+                let balance = accountBalance;
                 account.balance = balance;
                 addresses.push(account);
             }

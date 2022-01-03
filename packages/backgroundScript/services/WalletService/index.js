@@ -115,7 +115,7 @@ class Wallet extends EventEmitter {
         Object.entries(accounts).forEach(([ address, account ]) => {
             const accountObj = new Account(
                 account.type,
-                account.mnemonic || account.privateKey || account.address,
+                (account.type == 0) ? account.mnemonic : (account.type ==1) ? account.privateKey : account.address,
                 account.accountIndex
             );
 
@@ -134,8 +134,10 @@ class Wallet extends EventEmitter {
             logger.info('Stopped polling');
             return;
         }
-
         const accounts = Object.values(this.accounts);
+        for (const account of accounts) {
+                logger.info(`address ${account.address}`);
+            }
         if(accounts.length > 0) {
             // const { data: { data: basicTokenPriceList } } = await axios.get('https://bancor.trx.market/api/exchanges/list?sort=-balance').catch(e => {
             //     logger.error('get trc10 token price fail');
@@ -627,6 +629,7 @@ class Wallet extends EventEmitter {
      *
      * @param privateKey
      * @param name
+     * @param mnemonic
      * @returns {Promise.<boolean>}
      */
 
@@ -644,6 +647,7 @@ class Wallet extends EventEmitter {
 
         account.name = name;
         account.mnemonic = mnemonic;
+        account.balance = await NodeService.tronWeb.trx.getBalance(address);
         if(Object.keys(this.accounts).length === 0) {
             this.setCache();
         }
@@ -756,6 +760,7 @@ class Wallet extends EventEmitter {
                 energyUsed: account.energyUsed,
                 totalEnergyWeight: account.totalEnergyWeight,
                 TotalEnergyLimit: account.TotalEnergyLimit,
+                bandwidth: account.bandwidth,
                 energy: account.energy,
                 netUsed: account.netUsed,
                 netLimit: account.netLimit,
@@ -1162,9 +1167,13 @@ class Wallet extends EventEmitter {
 
     async getAccountInfo(address) {
         return {
-            mainchain: await NodeService.sunWeb.mainchain.trx.getUnconfirmedAccount(address),
+            mainchain: await NodeService.tronWeb.trx.getBalance(address),
             sidechain: await NodeService.sunWeb.sidechain.trx.getUnconfirmedAccount(address),
         };
+    }
+    async getAccountBalance(address) { 
+        const balance =  await NodeService.tronWeb.trx.getBalance(address)
+        return balance;
     }
 
     setGaEvent({ eventCategory, eventAction, eventLabel, referrer }) {

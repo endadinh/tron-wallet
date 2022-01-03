@@ -262,6 +262,10 @@ export default {
         return this.duplex.send('getAccountInfo', address);
     },
 
+    getAccountBalance(address) {
+        return this.duplex.send('getAccountBalance', address);
+    },
+
     setGaEvent(eventCategory, eventAction, eventLabel, referrer = '') {
         this.duplex.send('setGaEvent', { eventCategory, eventAction, eventLabel, referrer }, false);
     },
