@@ -345,7 +345,6 @@ class Account {
                         balance: value,
                         price
                     };
-
                 }
             }
             //const smartTokens = account.trc20token_balances.filter(v => v.balance >= 0);
