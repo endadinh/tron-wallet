@@ -660,7 +660,7 @@ class Wallet extends EventEmitter {
     }
 
     async setCache(isResetPhishingList = true ){
-        const selectedChain = NodeService._selectedChain;
+        // const selectedChain = NodeService._selectedChain;
         // const dapps   = axios.get('https://dappradar.com/api/xchain/dapps/theRest');
         // const dapps2  = axios.get('https://dappradar.com/api/xchain/dapps/list/0');
         // if(dapps && dapps2){
@@ -669,7 +669,7 @@ class Wallet extends EventEmitter {
         //         StorageService.saveAllDapps(tronDapps);
         //     });
         // }
-        const trc10tokens = axios.get('https://apilist.tronscan.org/api/token?showAll=1&limit=4000&fields=tokenID,name,precision,abbr,imgUrl,isBlack');
+        const trc10tokens = axios.get('https://apilist.tronscan.org/api/token?showAll=1&limit=5000&fields=tokenID,name,precision,abbr,imgUrl,isBlack');
         const trc20tokens = axios.get('https://apilist.tronscan.org/api/tokens/overview?start=0&limit=1000&filter=trc20');
         const trc20tokens_s = axios.get('https://dappchainapi.tronscan.org/api/tokens/overview?start=0&limit=1000&filter=trc20');
         Promise.all([trc10tokens, trc20tokens, trc20tokens_s]).then(res => {
